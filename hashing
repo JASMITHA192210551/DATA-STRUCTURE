@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+
+// Structure for a hash table entry
+struct HashEntry {
+    int key;
+    int value;
+    int occupied;
+};
+
+// Structure for the hash table
+struct HashTable {
+    struct HashEntry* table[TABLE_SIZE];
+};
+
+// Function to create a new hash table entry
+struct HashEntry* createHashEntry(int key, int value) {
+    struct HashEntry* entry = (struct HashEntry*)malloc(sizeof(struct HashEntry));
+    entry->key = key;
+    entry->value = value;
+    entry->occupied = 1;
+    return entry;
+}
+
+// Function to initialize the hash table
+void initHashTable(struct HashTable* hashTable) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        hashTable->table[i] = NULL;
+    }
+}
+
+// Function to calculate the hash value
+int hash(int key) {
+    return key % TABLE_SIZE;
+}
+
+// Function to insert a key-value pair into the hash table using linear probing
+void insert(struct HashTable* hashTable, int key, int value) {
+    int index = hash(key);
+    while (hashTable->table[index] != NULL && hashTable->table[index]->occupied) {
+        index = (index + 1) % TABLE_SIZE;
+    }
+    hashTable->table[index] = createHashEntry(key, value);
+}
+
+// Function to search for a value by key in the hash table
+int search(struct HashTable* hashTable, int key) {
+    int index = hash(key);
+    while (hashTable->table[index] != NULL) {
+        if (hashTable->table[index]->key == key && hashTable->table[index]->occupied) {
+            return hashTable->table[index]->value;
+        }
+        index = (index + 1) % TABLE_SIZE;
+    }
+    return -1; // Not found
+}
+
+int main() {
+    struct HashTable hashTable;
+    initHashTable(&hashTable);
+
+    insert(&hashTable, 5, 50);
+    insert(&hashTable, 15, 150);
+    insert(&hashTable, 25, 250);
+
+    int key = 15;
+    int value = search(&hashTable, key);
+    if (value != -1) {
+        printf("Value for key %d: %d\n", key, value);
+    } else {
+        printf("Key %d not found\n", key);
+    }
+
+    return 0;
+}
