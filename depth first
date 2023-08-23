@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_NODES 100
+
+struct Graph {
+    int nodes;
+    int adjacencyMatrix[MAX_NODES][MAX_NODES];
+};
+
+bool visited[MAX_NODES];
+
+void dfs(struct Graph *graph, int node) {
+    printf("%d ", node);
+    visited[node] = true;
+	int i;
+    for (i = 0; i < graph->nodes; i++) {
+        if (!visited[i] && graph->adjacencyMatrix[node][i] == 1) {
+            dfs(graph, i);
+        }
+    }
+}
+
+int main() {
+    struct Graph graph = {
+        .nodes = 5,
+        .adjacencyMatrix = {
+            {0, 1, 1, 0, 0},
+            {1, 0, 0, 1, 1},
+            {1, 0, 0, 0, 1},
+            {0, 1, 0, 0, 0},
+            {0, 1, 1, 0, 0}
+        }
+    };
+	int i;
+    for (i = 0; i < MAX_NODES; i++) {
+        visited[i] = false;
+    }
+
+    printf("DFS traversal: ");
+    dfs(&graph, 0);
+    printf("\n");
+
+    return 0;
+}
